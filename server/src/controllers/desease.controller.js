@@ -2,17 +2,12 @@
 import Disease from '../models/desease.model.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
-import diseaseSchema from '../validate/desease.validate.js';
 
 // Create a new disease record with user details
 const createDisease = async (req, res, next) => {
     const { name, symptoms, tablets, description, userAge, userGender } = req.body;
 
     // Validate the request data against the schema
-    const { error } = diseaseSchema.validate(req.body);
-    if (error) {
-        return next(new ApiError(400, error.details[0].message));
-    }
 
     try {
         const disease = new Disease({ name, symptoms, tablets, description, userAge, userGender });
