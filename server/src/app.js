@@ -1,4 +1,4 @@
-// app.js
+// app.js (or your main file)
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
@@ -9,21 +9,28 @@ import cookieParser from 'cookie-parser';
 import User from './models/user.model.js';
 import dotenv from 'dotenv';
 
-// Load environment variables from a custom file
 dotenv.config();
-
 
 const app = express();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 app.use(cookieParser());
+app.use(cors({
+    origin: 'http://your-frontend-url.com', // Replace with your frontend URL
+    credentials: true,
+}));
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: false, // Set to true if using HTTPS
+        maxAge: 1000 * 60 * 60 * 24,
+    },
 }));
 
 // Passport.js initialization
@@ -64,12 +71,13 @@ passport.deserializeUser(async (id, done) => {
 
 // Import and use user routes
 app.get("/", (_, res) => {
-    res.send("server connected")
-})
+    res.send("server connected");
+});
 
 import userRoutes from './routes/user.route.js';
 app.use('/api/v1/user', userRoutes);
 
+// Add other routes as necessary
 import diseaseRoutes from './routes/desease.route.js';
 app.use('/api/v1/disease', diseaseRoutes);
 

@@ -1,7 +1,8 @@
 // controllers/user.controller.js
-import ApiResponse from '../utils/ApiResponse.js';
-import ApiError from '../utils/ApiError.js';
-import User from '../models/user.model.js'; // Assuming you have a User model
+import { ApiResponse } from '../utils/ApiResponse.js';
+import { ApiError } from '../utils/ApiError.js';
+import User from '../models/user.model.js';
+import bcrypt from 'bcrypt';
 
 // Middleware to check if the user is logged in
 const isLoggedIn = (req, res, next) => {
@@ -15,8 +16,10 @@ const isLoggedIn = (req, res, next) => {
 const registerUser = async (req, res, next) => {
     try {
         const { username, password } = req.body;
-        // Assuming User is a model you’ve defined elsewhere to manage user data
-        const user = await User.create({ username, password });
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({ username, password: hashedPassword });
 
         res.status(201).json(new ApiResponse(201, user, 'User registered successfully', {
             message: 'Registration completed. You can now log in.',

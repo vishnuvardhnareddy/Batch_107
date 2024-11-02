@@ -1,8 +1,8 @@
 // controllers/disease.controller.js
-import Disease from '../models/disease.model.js';
-import ApiResponse from '../utils/ApiResponse.js';
-import ApiError from '../utils/ApiError.js';
-import diseaseSchema from '../validate/disease.validate.js';
+import Disease from '../models/desease.model.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
+import { ApiError } from '../utils/ApiError.js';
+import diseaseSchema from '../validate/desease.validate.js';
 
 // Create a new disease record with user details
 const createDisease = async (req, res, next) => {
