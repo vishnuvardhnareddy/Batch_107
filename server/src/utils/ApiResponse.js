@@ -1,19 +1,9 @@
-// utils/ApiResponse.js
-
 class ApiResponse {
-    constructor(success, message, data = null) {
-        this.success = success;
-        this.message = message;
-        this.data = data;
-    }
-
-    static success(message, data) {
-        return new ApiResponse(true, message, data);
-    }
-
-    static error(message, data = null) {
-        return new ApiResponse(false, message, data);
+    constructor(statusCode, data, message = "Success") {
+        this.statusCode = statusCode
+        this.data = data
+        this.message = message
+        this.success = statusCode < 400
     }
 }
-
-export default ApiResponse;
+export { ApiResponse }
