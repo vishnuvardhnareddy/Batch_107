@@ -5,8 +5,10 @@ import { useNavigate } from 'react-router-dom';
 const AddDisease = () => {
     const [name, setName] = useState('');
     const [ageGroup, setAgeGroup] = useState('');
+    const [symptoms, setSymptoms] = useState('');
     const [precautions, setPrecautions] = useState('');
     const [recommendedTablets, setRecommendedTablets] = useState('');
+    const [description, setDescription] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -14,7 +16,7 @@ const AddDisease = () => {
         e.preventDefault();
         setError('');
 
-        if (!name || !ageGroup || !precautions || !recommendedTablets) {
+        if (!name || !ageGroup || !symptoms || !precautions || !recommendedTablets || !description) {
             setError('All fields are required.');
             return;
         }
@@ -24,8 +26,10 @@ const AddDisease = () => {
             const response = await axios.post(`${URI}/disease/postData`, {
                 name,
                 ageGroup,
+                symptoms: symptoms.split(',').map(symptom => symptom.trim()), // Convert symptoms to array
                 precautions,
-                recommendedTablets
+                recommendedTablets: recommendedTablets.split(',').map(tablet => tablet.trim()), // Convert tablets to array
+                description
             }, { withCredentials: true });
 
             if (response.status === 201) {
@@ -66,6 +70,17 @@ const AddDisease = () => {
                     />
                 </div>
                 <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1 text-gray-300">Symptoms</label>
+                    <input
+                        type="text"
+                        value={symptoms}
+                        onChange={(e) => setSymptoms(e.target.value)}
+                        className="border border-gray-600 rounded-lg w-full p-2 bg-gray-700 bg-opacity-80 text-white placeholder-gray-400"
+                        placeholder="Enter symptoms (comma separated)"
+                        required
+                    />
+                </div>
+                <div className="mb-4">
                     <label className="block text-sm font-medium mb-1 text-gray-300">Precautions</label>
                     <textarea
                         value={precautions}
@@ -83,7 +98,18 @@ const AddDisease = () => {
                         value={recommendedTablets}
                         onChange={(e) => setRecommendedTablets(e.target.value)}
                         className="border border-gray-600 rounded-lg w-full p-2 bg-gray-700 bg-opacity-80 text-white placeholder-gray-400"
-                        placeholder="Enter recommended tablets"
+                        placeholder="Enter recommended tablets (comma separated)"
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1 text-gray-300">Description</label>
+                    <textarea
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="border border-gray-600 rounded-lg w-full p-2 bg-gray-700 bg-opacity-80 text-white placeholder-gray-400"
+                        rows="4"
+                        placeholder="Enter a brief description of the disease"
                         required
                     />
                 </div>

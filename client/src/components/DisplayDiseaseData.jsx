@@ -18,19 +18,34 @@ const DisplayDiseaseData = () => {
     return (
         <div className="app-background mx-auto p-6 mt-16 bg-gray-800 bg-opacity-90 rounded-lg shadow-lg max-w-2xl">
             <h1 className="text-2xl font-bold mb-4 text-white">Disease Details</h1>
+
+            {/* General Information Section */}
             <div className="mb-4 p-4 border-l-4 border-blue-500 bg-blue-700 bg-opacity-60 rounded-lg">
                 <h2 className="text-xl font-semibold text-white">General Information</h2>
                 <p><strong className="text-gray-300">Name:</strong> <span className="text-gray-200">{diseaseDetails.name}</span></p>
                 <p><strong className="text-gray-300">Age Group:</strong> <span className="text-gray-200">{diseaseDetails.ageGroup}</span></p>
+                <p><strong className="text-gray-300">Description:</strong> <span className="text-gray-200">{diseaseDetails.description}</span></p>
             </div>
+
+            {/* Symptoms Section */}
+            <div className="mb-4 p-4 border-l-4 border-purple-500 bg-purple-700 bg-opacity-60 rounded-lg">
+                <h2 className="text-xl font-semibold text-white">Symptoms</h2>
+                <p className="text-gray-200">{diseaseDetails.symptoms.join(', ')}</p>
+            </div>
+
+            {/* Precautions Section */}
             <div className="mb-4 p-4 border-l-4 border-green-500 bg-green-700 bg-opacity-60 rounded-lg">
                 <h2 className="text-xl font-semibold text-white">Precautions</h2>
                 <p className="text-gray-200">{diseaseDetails.precautions}</p>
             </div>
+
+            {/* Recommended Tablets Section */}
             <div className="mb-4 p-4 border-l-4 border-orange-500 bg-orange-700 bg-opacity-60 rounded-lg">
                 <h2 className="text-xl font-semibold text-white">Recommended Tablets</h2>
                 <p className="text-gray-200">{diseaseDetails.recommendedTablets.join(', ')}</p>
             </div>
+
+            {/* Go Back Button */}
             <button
                 onClick={() => navigate(-1)} // Go back to the previous page
                 className="mt-4 bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-200"
