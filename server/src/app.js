@@ -72,10 +72,8 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-// Import and use user routes
-app.get("/", (_, res) => {
-    res.send("server connected");
-});
+import deseaseRoutes from "./routes/desease.route.js"
+app.use("/api/v1/disease", deseaseRoutes)
 
 import userRoutes from './routes/user.route.js';
 app.use('/api/v1/user', userRoutes);

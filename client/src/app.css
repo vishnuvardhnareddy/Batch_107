@@ -1,0 +1,16 @@
+/* App.css */
+.app-background {
+    background-image: url('./assets/banner.jpg');
+    /* Adjust path as necessary */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding-top: 4rem;
+    /* Adjust if navbar height changes */
+}
+
+* {
+    color: white;
+}

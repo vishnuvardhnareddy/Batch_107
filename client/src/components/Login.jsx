@@ -21,8 +21,8 @@ const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-80">
+        <div className="app-background flex items-center justify-center min-h-screen bg-gray-100">
+            <form onSubmit={handleLogin} className="bg-gray-600 p-6 rounded shadow-md w-80">
                 <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
                 {errorMessage && <p className="text-red-500 text-xs italic mb-4">{errorMessage}</p>}
                 <input
@@ -30,14 +30,14 @@ const Login = () => {
                     placeholder="Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="border border-gray-300 p-2 mb-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="border border-gray-300 p-2 mb-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
                 />
                 <input
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="border border-gray-300 p-2 mb-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="border border-gray-300 p-2 mb-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
                 />
                 <button
                     type="submit"
