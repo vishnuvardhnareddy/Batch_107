@@ -1,4 +1,3 @@
-// app.js (or your main file)
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
@@ -8,6 +7,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import User from './models/user.model.js';
 import dotenv from 'dotenv';
+import MongoStore from "connect-mongo";
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -17,24 +18,32 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// Middleware
+
+// CORS configuration: Allow requests from any origin
 app.use(cors({
-    origin: 'http://localhost:5173', // your frontend URL
-    credentials: true, // Allow credentials
+    origin: '*', // Allow requests from any origin
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 
+const store = MongoStore.create({
+    mongoUrl: process.env.MONGO_URI, // 'mongoUrl' instead of 'mongoURI'
+    crypto: {
+        secret: process.env.SESSION_SECRET || 'secret',
+    },
+    touchAfter: 24 * 3600, // 1 day in seconds
+});
 
 app.use(session({
+    store: store,
     secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        secure: false, // Change to true for production with HTTPS
+        secure: true, // Change to true for production with HTTPS
         maxAge: 1000 * 60 * 60 * 24,
     },
 }));
-
 
 // Passport.js initialization
 app.use(passport.initialize());
@@ -72,8 +81,9 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-import deseaseRoutes from "./routes/desease.route.js"
-app.use("/api/v1/disease", deseaseRoutes)
+// Routes
+import deseaseRoutes from "./routes/desease.route.js";
+app.use("/api/v1/disease", deseaseRoutes);
 
 import userRoutes from './routes/user.route.js';
 app.use('/api/v1/user', userRoutes);
@@ -81,4 +91,28 @@ app.use('/api/v1/user', userRoutes);
 // Test route
 app.get('/', (req, res) => res.send('Hello, world!'));
 
-export default app;
+
+const PORT = process.env.PORT || 3000;
+const connectDb = async () => {
+    try {
+        const mongoUri = process.env.MONGO_URI;
+
+        // Ensure the MONGO_URI variable is properly defined
+        if (!mongoUri) {
+            throw new Error("MONGO_URI is not defined in the environment variables.");
+        }
+
+        // Connect to MongoDB
+        await mongoose.connect(`${mongoUri}`);
+        console.log('Connected to MongoDB Atlas');
+
+        // Start the server
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Error connecting to MongoDB Atlas:', error);
+    }
+}
+
+connectDb();

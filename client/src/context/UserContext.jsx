@@ -16,7 +16,7 @@ export const UserProvider = ({ children, navigate }) => {
     // Register and login
     const registerUser = async (username, password) => {
         try {
-            const response = await axios.post(${ URI } / user / register, { username, password }, { withCredentials: true });
+            const response = await axios.post(`${URI}/user/register`, { username, password }, { withCredentials: true });
             const userData = response.data.data;
             setUser(userData);
             localStorage.setItem('user', JSON.stringify(userData));
@@ -29,7 +29,7 @@ export const UserProvider = ({ children, navigate }) => {
     // Login
     const loginUser = async (username, password) => {
         try {
-            const response = await axios.post(${ URI } / user / login, { username, password }, { withCredentials: true });
+            const response = await axios.post(`${URI}/user/login`, { username, password }, { withCredentials: true });
             if (response.data.success) {
                 const userData = response.data.data;
                 setUser(userData);
@@ -44,7 +44,7 @@ export const UserProvider = ({ children, navigate }) => {
     // Logout
     const logoutUser = async () => {
         try {
-            await axios.get(${ URI } / user / logout, { withCredentials: true });
+            await axios.get(`${URI}/user/logout`, { withCredentials: true });
             setUser(null);
             localStorage.removeItem('user');
             navigate('/login');
@@ -58,7 +58,7 @@ export const UserProvider = ({ children, navigate }) => {
             const savedUser = localStorage.getItem('user');
             if (savedUser) {
                 try {
-                    const response = await axios.get(`${ URI } / user/verify`, { withCredentials: true });
+                    const response = await axios.get(`${URI}/user/verify`, { withCredentials: true });
                     if (response.data.isLoggedIn) {
                         setUser(JSON.parse(savedUser));
                     } else {

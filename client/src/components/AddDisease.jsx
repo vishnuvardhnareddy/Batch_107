@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext'; // Import user context to access username
 
 const AddDisease = () => {
+    const { user } = useUser(); // Access user data
     const [name, setName] = useState('');
     const [ageGroup, setAgeGroup] = useState('');
     const [symptoms, setSymptoms] = useState('');
@@ -42,9 +44,23 @@ const AddDisease = () => {
         }
     };
 
+    // Conditional rendering based on the username
+    if (user?.username !== 'maheshwari') {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-800 pt-16">
+                <div className="bg-gray-900 bg-opacity-90 p-10 rounded-lg shadow-lg max-w-lg text-center text-white">
+                    <h1 className="text-4xl font-bold mb-6">Access Denied</h1>
+                    <p className="text-lg">
+                        This page is restricted to admin access only. Please contact support if you believe this is an error.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-800 pt-16">
-            <div className="bg-gray-900 bg-opacity-90 p-10 rounded-lg shadow-lg w-full max-w-lg text-center text-white"> {/* Set width to full and limit max-width */}
+            <div className="bg-gray-900 bg-opacity-90 p-10 rounded-lg shadow-lg max-w-lg text-center text-white">
                 <h1 className="text-4xl font-bold mb-6">Add Disease</h1>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 <form onSubmit={handleSubmit}>
@@ -124,9 +140,6 @@ const AddDisease = () => {
             </div>
         </div>
     );
-
-
-
 };
 
 export default AddDisease;
