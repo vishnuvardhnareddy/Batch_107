@@ -3,7 +3,7 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/f
 
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-white text-center p-4 fixed bottom-0 w-full shadow-lg">
+        <footer className="bg-gray-900 text-white text-center p-4 bottom-0 w-full shadow-lg">
             <div className="container mx-auto flex justify-between items-center">
                 <p className="text-sm">
                     © {new Date().getFullYear()} Your App Name. All rights reserved.

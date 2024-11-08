@@ -1,6 +1,6 @@
 /* App.css */
 .app-background {
-    background-image: url('./assets/banner.jpg');
+    background-image: url('./assets/banner.png');
     /* Adjust path as necessary */
     background-size: cover;
     background-position: center;
