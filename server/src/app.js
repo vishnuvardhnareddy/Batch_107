@@ -19,9 +19,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// CORS configuration: Allow requests from any origin
+// CORS configuration: Allow requests from any origin with credentials
 app.use(cors({
-    origin: '*', // Allow requests from any origin
+    origin: function (origin, callback) {
+        callback(null, true); // Allow requests from any origin
+    },
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 
@@ -40,8 +42,8 @@ app.use(session({
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        secure: true, // Change to true for production with HTTPS
-        maxAge: 1000 * 60 * 60 * 24,
+        secure: process.env.NODE_ENV === 'production', // `true` in production, `false` for local development
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
 }));
 
@@ -91,8 +93,8 @@ app.use('/api/v1/user', userRoutes);
 // Test route
 app.get('/', (req, res) => res.send('Hello, world!'));
 
-
 const PORT = process.env.PORT || 3000;
+
 const connectDb = async () => {
     try {
         const mongoUri = process.env.MONGO_URI;
@@ -103,7 +105,7 @@ const connectDb = async () => {
         }
 
         // Connect to MongoDB
-        await mongoose.connect(`${mongoUri}`);
+        await mongoose.connect(mongoUri);
         console.log('Connected to MongoDB Atlas');
 
         // Start the server
