@@ -58,7 +58,7 @@ export const UserProvider = ({ children, navigate }) => {
             const savedUser = localStorage.getItem('user');
             if (savedUser) {
                 try {
-                    const response = await axios.get(`${URI}/user/verify`, { withCredentials: true });
+                    const response = await axios.get(`${URI}/user/session`, { withCredentials: true });
                     if (response.data.isLoggedIn) {
                         setUser(JSON.parse(savedUser));
                     } else {

@@ -14,39 +14,43 @@ dotenv.config();
 
 const app = express();
 
+// CORS Middleware (apply only once)
+app.use(cors({
+    origin: 'http://localhost:5173',  // Allow the specific frontend URL (e.g., React app)
+    credentials: true,  // Allow cookies and credentials to be sent
+}));
+
+// MongoDB session store setup
+const store = MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    crypto: {
+        secret: process.env.SESSION_SECRET,
+    },
+    touchAfter: 24 * 60 * 60,  // Ensure the session is not prematurely destroyed
+});
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// CORS configuration: Allow requests from any origin with credentials
-app.use(cors({
-    origin: function (origin, callback) {
-        callback(null, true); // Allow requests from any origin
-    },
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-}));
-
-const store = MongoStore.create({
-    mongoUrl: process.env.MONGO_URI, // 'mongoUrl' instead of 'mongoURI'
-    crypto: {
-        secret: process.env.SESSION_SECRET || 'secret',
-    },
-    touchAfter: 24 * 3600, // 1 day in seconds
+// MongoStore error logging
+store.on("error", (error) => {
+    console.error('MongoStore error:', error);
 });
 
+// Session middleware (must be after CORS)
 app.use(session({
-    store: store,
-    secret: process.env.SESSION_SECRET || 'secret',
+    store,
+    secret: process.env.SESSION_SECRET || 'secret',  // Use a secure secret for production
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // `true` in production, `false` for local development
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
+        httpOnly: true,  // Prevent JavaScript from accessing cookies
+        secure: process.env.NODE_ENV === 'production',  // `true` for HTTPS in production
+        maxAge: 1000 * 60 * 60 * 24,  // 1-day expiration for session cookie
     },
 }));
-
 // Passport.js initialization
 app.use(passport.initialize());
 app.use(passport.session());
