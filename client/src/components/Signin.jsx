@@ -28,44 +28,52 @@ const SignIn = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <form onSubmit={handleSignIn} className="bg-white p-6 rounded shadow-md w-80">
-                <h1 className="text-2xl font-bold mb-4 text-center">Sign In</h1>
+        <div className="flex items-center justify-center min-h-screen bg-gray-100 app-background" >
+            <form onSubmit={handleSignIn} className="bg-gray-600 p-8 rounded-lg shadow-lg w-full sm:w-96">
+                <h1 className="text-3xl font-semibold text-center text-white mb-6">Sign In</h1>
                 {errorMessage && <p className="text-red-500 text-xs italic mb-4">{errorMessage}</p>}
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="border border-gray-300 p-2 mb-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="border border-gray-300 p-2 mb-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Re-enter Password"
-                    value={reEnterPassword}
-                    onChange={(e) => setReEnterPassword(e.target.value)}
-                    className="border border-gray-300 p-2 mb-4 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <div className="flex items-center mb-4">
+                <div className="mb-6">
                     <input
-                        type="checkbox"
-                        id="showPassword"
-                        checked={showPassword}
-                        onChange={() => setShowPassword(!showPassword)}
-                        className="mr-2"
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
                     />
-                    <label htmlFor="showPassword" className="text-sm text-gray-700">Show Password</label>
+                </div>
+                <div className="mb-6">
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
+                    />
+                </div>
+                <div className="mb-6">
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Re-enter Password"
+                        value={reEnterPassword}
+                        onChange={(e) => setReEnterPassword(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
+                    />
+                </div>
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="showPassword"
+                            checked={showPassword}
+                            onChange={() => setShowPassword(!showPassword)}
+                            className="h-4 w-4 text-blue-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="showPassword" className="ml-2 text-sm text-gray-300">Show Password</label>
+                    </div>
                 </div>
                 <button
                     type="submit"
-                    className="bg-blue-500 text-white py-2 rounded w-full hover:bg-blue-600 transition"
+                    className="w-full py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300"
                 >
                     Register & Log In
                 </button>

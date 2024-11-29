@@ -9,6 +9,9 @@ import User from './models/user.model.js';
 import dotenv from 'dotenv';
 import MongoStore from "connect-mongo";
 import mongoose from 'mongoose';
+import fs from 'fs';
+import https from 'https';
+import http from 'http';
 
 dotenv.config();
 
@@ -97,7 +100,22 @@ app.use('/api/v1/user', userRoutes);
 // Test route
 app.get('/', (req, res) => res.send('Hello, world!'));
 
+// Create the HTTPS server
+const httpsOptions = {
+    key: fs.readFileSync('path/to/your/private-key.pem'),   // Replace with your private key path
+    cert: fs.readFileSync('path/to/your/certificate.pem'),  // Replace with your certificate path
+    ca: fs.readFileSync('path/to/your/ca.pem'),            // Replace with your CA certificate path (if applicable)
+};
+
+// HTTPS server setup
+const httpsServer = https.createServer(httpsOptions, app);
+
+// Fallback to HTTP server if HTTPS is not available
+const httpServer = http.createServer(app);
+
+// Connect to MongoDB and start servers
 const PORT = process.env.PORT || 3000;
+const HTTP_PORT = 3001; // Set a different port for HTTP
 
 const connectDb = async () => {
     try {
@@ -112,13 +130,18 @@ const connectDb = async () => {
         await mongoose.connect(mongoUri);
         console.log('Connected to MongoDB Atlas');
 
-        // Start the server
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
+        // Start the HTTP server for fallback (non-HTTPS requests)
+        httpServer.listen(HTTP_PORT, () => {
+            console.log(`HTTP server is running on port ${HTTP_PORT}`);
+        });
+
+        // Start the HTTPS server for secure requests
+        httpsServer.listen(PORT, () => {
+            console.log(`HTTPS server is running on port ${PORT}`);
         });
     } catch (error) {
         console.error('Error connecting to MongoDB Atlas:', error);
     }
-}
+};
 
 connectDb();
