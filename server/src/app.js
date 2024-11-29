@@ -5,21 +5,18 @@ import LocalStrategy from 'passport-local';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import User from './models/user.model.js';
+import User from './models/user.model.js'; // Assuming your User model is in 'models/user.model.js'
 import dotenv from 'dotenv';
-import MongoStore from "connect-mongo";
+import MongoStore from 'connect-mongo';
 import mongoose from 'mongoose';
-import fs from 'fs';
-import https from 'https';
-import http from 'http';
 
 dotenv.config();
 
 const app = express();
 
-// CORS Middleware (apply only once)
+// CORS Middleware (only for development)
 app.use(cors({
-    origin: 'http://localhost:5173',  // Allow the specific frontend URL (e.g., React app)
+    origin: 'http://localhost:5173',  // Allow your frontend's URL (e.g., React app)
     credentials: true,  // Allow cookies and credentials to be sent
 }));
 
@@ -32,29 +29,30 @@ const store = MongoStore.create({
     touchAfter: 24 * 60 * 60,  // Ensure the session is not prematurely destroyed
 });
 
-// Middleware
+// Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// MongoStore error logging
-store.on("error", (error) => {
+// MongoStore error handling
+store.on('error', (error) => {
     console.error('MongoStore error:', error);
 });
 
-// Session middleware (must be after CORS)
+// Session middleware (after CORS setup)
 app.use(session({
     store,
-    secret: process.env.SESSION_SECRET || 'secret',  // Use a secure secret for production
+    secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,  // Prevent JavaScript from accessing cookies
-        secure: process.env.NODE_ENV === 'production',  // `true` for HTTPS in production
+        secure: process.env.NODE_ENV === 'production',  // Only secure in production (nginx handles HTTPS)
         maxAge: 1000 * 60 * 60 * 24,  // 1-day expiration for session cookie
     },
 }));
-// Passport.js initialization
+
+// Passport.js setup
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -90,58 +88,39 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-// Routes
-import deseaseRoutes from "./routes/desease.route.js";
-app.use("/api/v1/disease", deseaseRoutes);
+// Routes with '/medassist/api/v1' prefix
+import deseaseRoutes from './routes/desease.route.js';
+app.use('/medassist/api/v1/disease', deseaseRoutes);
 
 import userRoutes from './routes/user.route.js';
-app.use('/api/v1/user', userRoutes);
+app.use('/medassist/api/v1/user', userRoutes);
 
-// Test route
-app.get('/', (req, res) => res.send('Hello, world!'));
+// Test route to check if the server is running
 
-// Create the HTTPS server
-const httpsOptions = {
-    key: fs.readFileSync('path/to/your/private-key.pem'),   // Replace with your private key path
-    cert: fs.readFileSync('path/to/your/certificate.pem'),  // Replace with your certificate path
-    ca: fs.readFileSync('path/to/your/ca.pem'),            // Replace with your CA certificate path (if applicable)
-};
 
-// HTTPS server setup
-const httpsServer = https.createServer(httpsOptions, app);
-
-// Fallback to HTTP server if HTTPS is not available
-const httpServer = http.createServer(app);
-
-// Connect to MongoDB and start servers
-const PORT = process.env.PORT || 3000;
-const HTTP_PORT = 3001; // Set a different port for HTTP
-
+// Connect to MongoDB and start the server
 const connectDb = async () => {
     try {
         const mongoUri = process.env.MONGO_URI;
 
-        // Ensure the MONGO_URI variable is properly defined
         if (!mongoUri) {
-            throw new Error("MONGO_URI is not defined in the environment variables.");
+            throw new Error('MONGO_URI is not defined in the environment variables.');
         }
 
         // Connect to MongoDB
         await mongoose.connect(mongoUri);
-        console.log('Connected to MongoDB Atlas');
+        console.log('Connected to MongoDB');
 
-        // Start the HTTP server for fallback (non-HTTPS requests)
-        httpServer.listen(HTTP_PORT, () => {
-            console.log(`HTTP server is running on port ${HTTP_PORT}`);
+        const PORT = process.env.PORT || 3000;
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
         });
 
-        // Start the HTTPS server for secure requests
-        httpsServer.listen(PORT, () => {
-            console.log(`HTTPS server is running on port ${PORT}`);
-        });
     } catch (error) {
-        console.error('Error connecting to MongoDB Atlas:', error);
+        console.error('Error connecting to MongoDB:', error);
     }
 };
 
 connectDb();
+
+export default app;
